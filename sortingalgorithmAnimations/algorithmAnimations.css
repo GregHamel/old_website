@@ -1,0 +1,66 @@
+
+
+body{
+width: 950px;
+margin: auto;
+text-align: center;
+background: lightgrey;
+
+}
+
+
+#buttons{
+width: 150px;
+position: absolute;
+left: 50px;
+top: 70px;
+}
+
+#random{
+top: 100px;
+}
+
+#title{
+font-size: 20px;
+padding:20px;
+top: 50 px;
+background: white;
+border-radius:25px;
+width: 200px;
+margin: auto;
+}
+
+#sortAnimation{
+width: 800px;
+height: 400px;
+margin: auto;
+background: white;
+position: relative;
+top: 10px;
+border-radius:25px;
+}
+
+.number{
+text-align: center;
+font-size: 30px;
+width: 60px;
+border: 12px;
+height: 60px;
+border-style:solid;
+border-color: white;
+background: orange;
+position: absolute;
+top: 250px;
+left: 50px;
+border-radius:25px;
+}
+
+#announce{
+background: white;
+width: 600px;
+border-radius:25px;
+margin: auto;
+padding: 5px;
+position: relative;
+top: 5px;
+}

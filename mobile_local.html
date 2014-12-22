@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script type="text/javascript"
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCphgbajKCDuhwoLn3HCLQW-0urExu6uuQ&sensor=false">
+    </script>
+
+<style>
+body{width: 320px;}
+h1 {font-size:150%; text-align: center; margin: auto; padding: 5px;}
+#weather{padding: 15px;}
+#news{padding: 15px;}
+#history{color: blue; text-decoration: underline; cursor: pointer;}
+
+</style>
+</head>
+
+
+<body>
+	<h1 id="intro">Mobile Local</h1>
+	<input type='text' id='query' /> Zip or City, State
+	<button id='submit'>Submit</button><br>OR<br>
+	<button id='geo'>Use Geolocation!</button><br><br>
+	
+	Real Time Weather: <br>
+	<div id="weather"> 
+	</div>
+	
+	Real Time News: <br>
+	<div id="news">
+	</div>
+	
+	<br>
+	<button id='hist'>Recent Searches</button>
+	<div id="history">
+	</div>
+</body>
+
+<script>
+	
+	//encodeURIComponent($('#query').val());
+
+	
+	//function handles retrieving up to 10 news stories
+	//and weather information if user enters a zip code or
+	//city, state and clicks "submit" button
+var counter = 1;
+
+$('#submit').on('click', function(){
+	$query = $('#query').val();
+	$query3 = encodeURIComponent($query);
+	localStorage[String(counter)] = $query3;
+	$query = $query.replace ( / /g, ",");
+	console.log($query);
+	$query = encodeURIComponent($query);
+	counter++;
+	url = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20rss%20where%20url%20%3D%20'http%3A%2F%2Fnews.google.com%2Fnews%3Fgeo%3D" + $query + "%26output%3Drss'&format=json&diagnostics=true";
+	$.getJSON(url, function(obj){ 
+		var stories = obj.query.count;
+
+		if (stories > 10)
+			stories = 10;
+		if ($('#news').val != false)
+				$('#news').empty()
+		for (var i = 0; i < stories; i++){
+			var title = obj.query.results.item[i].title;
+			var link = obj.query.results.item[i].link;
+			$('#news').append("<a href=" + link + ">" + title + "</a><br><br>")
+		}
+	})
+	
+	$query2 = $('#query').val();
+	$.ajax({
+		url: "http://api.wunderground.com/api/ee43d8c410a3fdf8/geolookup/conditions/q/" + $query2 + ".json",
+		dataType: "jsonp",
+		success: function(parsed_json) {
+
+			if ($('#weather').val != false)
+				$('#weather').empty()
+			var location = parsed_json['location']['city'];
+			var temp_f = parsed_json['current_observation']['temp_f'];
+			var windchill = parsed_json['current_observation']['windchill_string'];
+			var humidity = parsed_json['current_observation']['relative_humidity'];
+			var sky = parsed_json['current_observation']['icon'];
+			var skypic = parsed_json['current_observation']['icon_url'];
+			$('#weather').append("Current temperature in "+location+" is: " + temp_f + "<br> Current windchill: " + windchill + "<br> Humidity: " +humidity+ "<br> Sky condition: " +sky+ "  <img src='"+skypic+"'>");
+		}
+	});
+	
+});
+
+
+	//function populates news and weather information using
+	//geolocation
+	
+$('#geo').on('click', function(){
+	navigator.geolocation.getCurrentPosition(function(position) {  
+		var lat = position.coords.latitude;
+		var lng = position.coords.longitude; 
+		console.log(lat)
+		console.log(lng)
+		var geodata = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20json%20where%20url%20%3D%20'http%3A%2F%2Fmaps.googleapis.com%2Fmaps%2Fapi%2Fgeocode%2Fjson%3Flatlng%3D" + lat + "%2C" + lng + "%26sensor%3Dfalse'&format=json&diagnostics=true&callback="
+
+		
+		$.getJSON(geodata, function(data){
+
+			address = data.query.results.json.results[2]['formatted_address'];
+
+			$('#query').val(address);
+			$('#submit').trigger('click');
+		})
+	});  
+});
+
+$('#hist').on('click', function(){
+	if ($('#history').val != false)
+				$('#history').empty()
+	for (key in localStorage)
+		$('#history').append("<p onclick='searchagain("+key+")'>" + decodeURIComponent(localStorage[key]) + "</p>")
+});
+
+function searchagain(n){
+	$('#query').val(decodeURIComponent(localStorage[n]));
+	$('#submit').trigger('click');
+};
+
+
+//
+//helpful functions:
+//$.getJSON(url, callbackfunct());
+//encodeURIComponent(uri);
+</script>
+
+
+
+
+</html>

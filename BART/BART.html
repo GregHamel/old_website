@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+	<style type="text/css">
+	html { height: 100% }
+	body { height: 100%; margin: 0; padding: 0 }
+	#map { height: 100%; width: 85%; float: left}
+	</style>
+	
+	
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script type="text/javascript"
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCphgbajKCDuhwoLn3HCLQW-0urExu6uuQ&sensor=false">
+    </script>
+
+	
+
+	
+	</script>
+	<script type="text/javascript">
+      function initialize() {
+		stationlatlng = {};
+		markers = {};
+        var myOptions = {
+          center: new google.maps.LatLng(37.8, -122.15),
+          zoom: 10,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById("map"),
+            myOptions);
+			$.ajax({
+				type: "GET",
+				url: "stations.xml",
+				dataType: "xml",
+				success: function(xml){
+					$(xml).find("station").each(function () {
+		
+					var lat = $(this).find('gtfs_latitude').text();
+					var lng = $(this).find('gtfs_longitude').text();
+					var statname = $(this).find('name').text();
+					var abbr = $(this).find('abbr').text();
+					var latlng = new google.maps.LatLng(lat,lng);
+					stationlatlng[abbr] = latlng;
+					var marker = new google.maps.Marker({
+						position: latlng,
+						map: map,
+						title: statname});
+					google.maps.event.addListener(marker, 'click', function (){ stationinfo(marker, abbr)} );
+				})
+		    }
+		})
+      }
+	  
+	  function Route1(){
+	  			$.ajax({
+				type: "GET",
+				url: "route1.xml",
+				dataType: "xml",
+				success: function(xml){
+					var flightPlanCoordinates = [];
+					$(xml).find("station").each(function () {
+						var abbrv = $(this).text();
+						var pathc = stationlatlng[abbrv];
+						flightPlanCoordinates.push(pathc);
+					})
+					var flightPath = new google.maps.Polyline({
+					path: flightPlanCoordinates,
+					strokeColor: "#ffff33",
+					strokeOpacity: 1.0,
+					strokeWeight: 4
+					});
+					flightPath.setMap(map);
+				}
+		})
+		$('#selected').html('Pittsburg/Bay Point - SFIA/Millbrae');
+		}
+		
+		function Route2(){
+					$.ajax({
+				type: "GET",
+				url: "route2.xml",
+				dataType: "xml",
+				success: function(xml){
+					var flightPlanCoordinates = [];
+					$(xml).find("station").each(function () {
+						var abbrv = $(this).text();
+						var pathc = stationlatlng[abbrv];
+						flightPlanCoordinates.push(pathc);
+					})
+					var flightPath = new google.maps.Polyline({
+					path: flightPlanCoordinates,
+					strokeColor: "#ff9933",
+					strokeOpacity: 1.0,
+					strokeWeight: 4
+					});
+					flightPath.setMap(map);
+				}
+		})
+		$('#selected').html('Fremont - Richmond');
+		}
+		
+		function Route3(){
+					$.ajax({
+				type: "GET",
+				url: "route3.xml",
+				dataType: "xml",
+				success: function(xml){
+					var flightPlanCoordinates = [];
+					$(xml).find("station").each(function () {
+						var abbrv = $(this).text();
+						var pathc = stationlatlng[abbrv];
+						flightPlanCoordinates.push(pathc);
+					})
+					var flightPath = new google.maps.Polyline({
+					path: flightPlanCoordinates,
+					strokeColor: "#ff0000",
+					strokeOpacity: 1.0,
+					strokeWeight: 4
+					});
+					flightPath.setMap(map);
+				}
+		})
+		$('#selected').html('Richmond - Daly City/Millbrae');
+		}		
+		
+		function Route5(){
+					$.ajax({
+				type: "GET",
+				url: "route5.xml",
+				dataType: "xml",
+				success: function(xml){
+					var flightPlanCoordinates = [];
+					$(xml).find("station").each(function () {
+						var abbrv = $(this).text();
+						var pathc = stationlatlng[abbrv];
+						flightPlanCoordinates.push(pathc);
+					})
+					var flightPath = new google.maps.Polyline({
+					path: flightPlanCoordinates,
+					strokeColor: "#0099cc",
+					strokeOpacity: 1.0,
+					strokeWeight: 4
+					});
+					flightPath.setMap(map);
+				}
+		})
+		$('#selected').html('Dublin/Pleasanton - Daly City');
+		}
+		
+		function Route4(){
+					$.ajax({
+				type: "GET",
+				url: "route4.xml",
+				dataType: "xml",
+				success: function(xml){
+					var flightPlanCoordinates = [];
+					$(xml).find("station").each(function () {
+						var abbrv = $(this).text();
+						var pathc = stationlatlng[abbrv];
+						flightPlanCoordinates.push(pathc);
+					})
+					var flightPath = new google.maps.Polyline({
+					path: flightPlanCoordinates,
+					strokeColor: "#339933",
+					strokeOpacity: 1.0,
+					strokeWeight: 4
+					});
+					flightPath.setMap(map);
+				}
+		})
+		$('#selected').html('Fremont - Daly City');
+		}
+
+		
+	  function stationinfo(marker, abbr){
+	  
+	  var contentString = "";
+	  
+			$.ajax({
+				type: "GET",
+				url: "http://api.bart.gov/api/etd.aspx?cmd=etd&orig=" + abbr + "&key=MW9S-E7SL-26DU-VV8V",
+				dataType: "xml",
+				success: function(xml){
+					$(xml).find("etd").each(function () {
+						contentString += "Destination: " + $(this).find('destination').text() + " ";
+						$(this).find("estimate").each(function () {
+							contentString += "Train ETD: " + $(this).find('minutes').text() + " minutes ";
+						})
+					})
+					
+					var infowindow = new google.maps.InfoWindow({
+						content: contentString,
+						maxWidth: 300
+					});
+	
+					infowindow.open(map,marker);
+				}
+			})	
+		
+	 
+	 }
+	  
+	  
+	  
+	  
+    </script>
+
+	<title> BART </title> 	
+
+	</head>
+
+	
+	
+	<body onload="initialize()">
+
+		<div id="map">
+		
+		</div>
+		
+		<div id="test">
+		<form id="routes">
+			<input type="radio" name="Routes" value="Route1" onclick='Route1()'/> Yellow<br />
+			<input type="radio" name="Routes" value="Route2" onclick='Route2()'/> Orange<br />
+			<input type="radio" name="Routes" value="Route3" onclick='Route3()'/> Red<br />
+			<input type="radio" name="Routes" value="Route4" onclick='Route4()'/> Green<br />
+			<input type="radio" name="Routes" value="Route5" onclick='Route5()'/> Blue<br />
+		</form>
+		</div>
+		
+		<div id="selected">
+		
+		</div>
+		
+	</body>
+
+</html>

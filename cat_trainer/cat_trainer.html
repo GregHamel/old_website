@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="cat.css" />
+	<script type="text/javascript" src="cat.js"></script>
+	
+	<script>
+
+	</script>
+	
+	<title> Cat Trainer</title>
+</head>
+
+
+
+<body>
+	
+	<h1 id="bodytitle"> Cat Trainer</h1><br>
+	<div id="cats">
+	<img src="cat1.jpg" id="Harry" class="cat" onclick="train1()"/> 
+	<img src="cat2.jpg" id="Spot" class="cat" onclick="train2()"/>
+	<img src="cat3.jpg" id="Billiam" class="cat" onclick="train3()"/>
+	<img src="cat4.jpg" id="George" class="cat" onclick="train4()"/>
+	</div>
+	<br> 
+	<h2 id="announce"> Pick a Cat to Train! (Shoot for 50 on each stat, except for weight...) </h2>
+	<br>
+	
+	<div id="status"> 
+	Not Training any cats.
+	</div><br>
+	
+	<div id="training">Mew!
+	</div>
+	
+	<div id="actions">
+	<button type="button" onclick="feed()">Feed</button><br>
+	<button type="button" onclick="pet()">Pet</button><br>
+	<button type="button" onclick="play()">Play</button><br>
+	<button type="button" onclick="groom()">Groom</button><br>
+	<button type="button" onclick="catnip()">Catnip</button>
+	</div>
+	
+	<div id="stats">
+	<ul>
+		<li id="w">Weight: </li>
+		<li id="h">Happiness: </li>
+		<li id="s">Strength: </li>
+		<li id="f">Flufiness: </li>
+	</ul>
+	</div>
+	
+	<audio id="meow" autoplay="autoplay">
+	
+	</audio>
+	
+	</body>
+
+
+</html>
+
+
+
+
